@@ -1,11 +1,25 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import SideNav from './_components/SideNav'
 import Header from './_components/Header'
+import GlobalApi from '../_utils/GlobalApi'
+import { useUser } from '@clerk/nextjs'
+import { UserDetailContext } from '../_context/userDetailContext'
 
 function layout({ children }) {
   const [toggleSideBar, setToggleSideBar] = useState(true)
+  const {user} = useUser();
+  const {userDetail, setUserDetail} = useContext(UserDetailContext);
+  useEffect(()=>{
+    user&&getUserDetails()
+  },[user])
+  const getUserDetails = ()=>{
+    GlobalApi.getUserByEmail(user.primaryEmailAddress.emailAddress).then(resp=>{
+      setUserDetail(resp.data);
+    })
+  }
   return (
+  
     <div>
 
       {/* This side bar used when screen size is medium or larger  */}
